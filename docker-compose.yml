@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  frontend:
+    build: ./client
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8080
+    networks:
+      - webapp
+
+  backend:
+    build: ./server
+    hostname: api
+    networks:
+      - webapp
+    ports:
+      - "8080:8080"
+
+
+networks:
+  webapp:
+    driver: bridge

@@ -1,5 +1,9 @@
+"use client"
+
 import "./globals.css"
 import Navbar from "./components/navbar"
+import React, { useEffect } from "react";
+
 export default function Home() {
   return (
     <main>
