@@ -4,8 +4,6 @@ services:
     build: ./client
     ports:
       - "3000:3000"
-    environment:
-      - REACT_APP_BACKEND_URL=http://localhost:8080
     networks:
       - webapp
 
