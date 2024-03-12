@@ -11,4 +11,10 @@
   outline: 1px solid red;
   height: 100vh;
   width: 100vw;
+  flex-direction: column;
+}
+
+.doggoPicture {
+  width: 200px;
+  height: 200px;
 }
