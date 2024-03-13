@@ -1,12 +1,14 @@
 
+import Link from "next/link"
 export default function Navbar() {
 
     return(
         <div className="navbar bg-base-100">
             <div className="flex-1">
-                <a className="btn btn-ghost text-xl">Jinder</a>
+                <Link className="btn btn-ghost text-xl" href = "/">Jinder</Link>
             </div>
-            <a className="btn btn-ghost text-xl">Nav Bar</a>
+            <Link className="btn btn-ghost text-l" href = "/login">Login</Link>
+            <Link className="btn btn-ghost text-l" href = "/register">Register</Link>
         </div>
     )
 }
