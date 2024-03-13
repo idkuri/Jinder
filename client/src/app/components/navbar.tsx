@@ -1,6 +1,6 @@
 
 import Link from "next/link"
-import "./styles/navbar.css"
+import "../styles/navbar.css"
 export default function Navbar() {
 
     return(

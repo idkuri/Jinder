@@ -1,7 +1,7 @@
-import "./globals.css"
+import "../styles/globals.css"
 import React, { useEffect } from "react";
 import Image from 'next/image'
-import dog from "../../public/doggo.jpg";
+import dog from "../../../public/doggo.jpg";
 
 export const Home: React.FC = () => {
   return (

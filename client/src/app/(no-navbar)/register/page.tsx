@@ -1,6 +1,6 @@
 "use client"
 import React, {useState} from "react"
-import "./styles/register.css"
+import "../../styles/register.css"
 import Image from 'next/image'
 export default function Register() {
   const [email, setEmail] = useState("")
