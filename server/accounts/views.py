@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.conf import global_settings
+from django.conf import settings
 import psycopg2
 # Create your views here.
-dbsettings = global_settings.DATABASES['default']
+dbsettings = settings.DATABASES['default']
+print("Flag " + str(dbsettings))
 connector = psycopg2.connect(
     dbname=dbsettings['NAME'],
     user=dbsettings['USER'],
