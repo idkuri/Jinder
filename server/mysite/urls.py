@@ -8,6 +8,7 @@ from django.conf.urls import url
 urlpatterns = [
     path('', views.serveRoot, name="serveRoot"),
     re_path(r'favicon.ico/?$', views.serveFavicon, name="serveFavicon"),
+    re_path(r'_next/static/', views.serveStatic, name="serveStatic"),
     re_path(r'_next/image/?$', views.serveImage, name="serveImage"),
     re_path(r'login/?$', views.serveLoginPage, name="serveLoginPage"),
     re_path(r'register/?$', views.serveRegisterPage, name="serveRegisterPage"),

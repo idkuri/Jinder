@@ -29,13 +29,21 @@ def serveLoginPage(request):
 def serveRegisterPage(request):
     return render(request, 'register.html')
 
-
 def serveRSC(request):
     url_param = request.path
-    print(url_param)
     if url_param.startswith('/'):
         url_param = url_param[1:]
     rsc_path = os.path.join(settings.STATIC_ROOT, url_param)
     with open(rsc_path, 'rb') as file:
         response = HttpResponse(file.read(), content_type='text/plain')
+        return response
+
+def serveStatic(request):
+    url_param = request.path
+    if url_param.startswith('/'):
+        url_param = url_param[1:]
+    file_path = os.path.join(settings.STATIC_ROOT, url_param)
+    mime_type, _ = mimetypes.guess_type(file_path)
+    with open(file_path, 'rb') as file:
+        response = HttpResponse(file.read(), content_type=mime_type)
         return response

@@ -28,9 +28,9 @@ ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'django-insecure-3(alkt5z1c83zwr82vx%q_f8e(ql@0f)*5n)kokbcnn_-mvsc*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 APPEND_SLASH = False
 
@@ -56,6 +56,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'jinder.urls'
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 TEMPLATES = [
     {
@@ -126,10 +128,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '_next/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'templates')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
     BASE_DIR / "templates/_next/static",
+    BASE_DIR / "templates/",
 ]
 
 # Default primary key field type
