@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+# Server port
+RUN_SERVER_PORT = 8080
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -54,7 +59,7 @@ ROOT_URLCONF = 'jinder.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,7 +124,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '_next/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    BASE_DIR / "templates/",
+    BASE_DIR / "templates/_next/static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

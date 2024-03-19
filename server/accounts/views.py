@@ -14,7 +14,6 @@ connector = psycopg2.connect(
 )
 cursor = connector.cursor()
 
-
 def register_user(request):
     return HttpResponse('hello world')
 

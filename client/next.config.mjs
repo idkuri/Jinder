@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'export',
+    distDir: 'templates',
+    assetPrefix: '',
     async headers() {
       return [
         {
