@@ -1,5 +1,5 @@
 """
-ASGI config for projectserver project.
+ASGI config for jinder project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'projectserver.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'jinder.settings')
 
 application = get_asgi_application()

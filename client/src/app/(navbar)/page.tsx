@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Image from 'next/image'
 import dog from "../../../public/doggo.jpg";
 
-export const Home: React.FC = () => {
+const Home: React.FC = () => {
   return (
     <main>
       <div className="homepage">

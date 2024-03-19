@@ -7,13 +7,13 @@ services:
     networks:
       - webapp
 
-  # backend:
-  #   build: ./server
-  #   hostname: api
-  #   networks:
-  #     - webapp
-  #   ports:
-  #     - "8080:8080"
+  backend:
+    build: ./server
+    hostname: api
+    networks:
+      - webapp
+    ports:
+      - "8080:8080"
 
   db:
     image: postgres
@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: Admin
       POSTGRES_PASSWORD: RedTeam197
     ports:
-      - '27017:27017' # Remove during prod
+      - '5432:5432' # Remove during prod
 
 
 networks:
