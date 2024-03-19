@@ -35,3 +35,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Caches
+*.cache
+
+# Log files
+*.log
+
+# Compiled Python files
+*.pyc
+
+# Backup files
+*~
+*.bak
+*.swp
+
+# Database
+*.sqlite3
