@@ -1,7 +1,6 @@
-FROM python:3
+FROM python:3.8
 
 WORKDIR /server
-
 ENV HOME /server
 
 COPY . .

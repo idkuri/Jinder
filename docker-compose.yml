@@ -20,6 +20,9 @@ services:
     restart: always
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: RedDb
+      POSTGRES_USER: Admin
+      POSTGRES_PASSWORD: RedTeam197
     ports:
       - '27017:27017' # Remove during prod
 

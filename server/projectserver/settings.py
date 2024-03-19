@@ -76,9 +76,9 @@ WSGI_APPLICATION = 'projectserver.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgre',
-        'USER': 'postgre',
-        'PASSWORD': 'pass',
+        'NAME': 'RedDb',
+        'USER': 'Admin',
+        'PASSWORD': 'RedTeam197',
         'HOST': 'localhost',
         'PORT': '8080',
     }
