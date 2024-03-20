@@ -17,19 +17,21 @@ connector = psycopg2.connect(
     host=dbsettings['HOST'],
     port=dbsettings['PORT']
 )
+cursor = connector.cursor()
 try:
-    cursor = connector.cursor()
     create_table_query = '''
         CREATE TABLE users (
             id SERIAL PRIMARY KEY,
             username VARCHAR UNIQUE NOT NULL,
             password VARCHAR NOT NULL,
             auth_token VARCHAR,
-            account_type VARCHAR NOT NULL
+            account_type VARCHAR NOT NULL,
+            salt VARCHAR NOT NULL
         )
     '''
     cursor.execute(create_table_query)
     connector.commit()
+    print("hello")
 except:
     pass
 
@@ -43,22 +45,26 @@ def register_user(request):
             SELECT * FROM users
             WHERE username = %s
         """
+
         cursor.execute(select_query, (body['username'],))
         rows = cursor.fetchall()
 
         if len(rows) != 0:
             return HttpResponse("Invalid user, Please return to homepage.")
+        
+        salt = secrets.token_hex(8) 
+        hashed_password = hashlib.sha256((body['password'] + salt).encode('utf-8')).hexdigest()
 
         auth_token = secrets.token_hex(8)
         hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
 
         insert_query = """
-            INSERT INTO users (username, password, auth_token, account_type)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO users (username, password, auth_token, account_type, salt)
+            VALUES (%s, %s, %s, %s, %s)
         """
 
         print(insert_query)
-        cursor.execute(insert_query, (body['username'], body['password'], hashed_token, body['accountType']))
+        cursor.execute(insert_query, (body['username'], hashed_password, hashed_token, body['accountType'],salt))
         connector.commit()
         
         #username value;password value;confirmpassword value
