@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'export',
     distDir: 'templates',
     assetPrefix: '',
     async headers() {
@@ -18,6 +17,10 @@ const nextConfig = {
     },
   
   };
+
+if (process.env.NODE_ENV === 'production') {
+    nextConfig.output = 'export';
+}
   
 
 
