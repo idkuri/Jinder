@@ -7,19 +7,14 @@ export default function Navbar()
 {
     const [mode, setMode] = useState(0) // if mode == 0, it means not logged in. if mode == 1 it means logged in
     const [username, setUsername] = useState("")
-    
+
     useEffect(() => {
-        const auth_token = Cookies.get("auth_token")
-        if (auth_token != undefined) {
-            authenticate(auth_token)
-        }
+        authenticate()
       })
       
-      async function authenticate(auth_token: string) {
+      async function authenticate() {
         const response = await fetch("/api/authenticate", {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${auth_token}`}
         })
         alert(response.status)
       }
