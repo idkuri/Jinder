@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'RedDb',
         'USER': 'Admin',
         'PASSWORD': 'RedTeam197',
-        'HOST': 'postgres', # Change to localhost in development mode
+        'HOST': 'localhost', # Change to localhost in development mode
         'PORT': '5432',
     }
 }

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import render
 import hashlib
@@ -62,13 +63,12 @@ def register_user(request):
             VALUES (%s, %s, %s, %s, %s)
         """
 
-        print(insert_query)
         cursor.execute(insert_query, (body['username'], hashed_password, hashed_token, body['accountType'],salt))
         connector.commit()
         
         #username value;password value;confirmpassword value
         response = HttpResponse("User Registration success, Please return to homepage.")
-        response.set_cookie('auth_token', auth_token)
+        response.set_cookie('auth_token', auth_token, max_age=3600, httponly=True)
         return response # Need add a auth_token cookie to HttpResponse
     
     except psycopg2.Error as error:
@@ -97,7 +97,6 @@ def user_login(request):
 
     if hashed_password != hashlib.sha256((body["password"] + salt).encode('utf-8')).hexdigest():
         response = HttpResponse("Wrong password, Please return to homepage.")
-        response.set_cookie('auth_token', auth_token)
         return response # Need add a auth_token cookie to HttpResponse
     
     new_auth_token = secrets.token_hex(8)
@@ -108,17 +107,32 @@ def user_login(request):
                 WHERE id = %s"""
     
     cursor.execute(update_query, (hashed_token,id,))
-
-    return HttpResponse("User Login")
+    connector.commit()
+    
+    response = HttpResponse("User Login")
+    response.set_cookie('auth_token', new_auth_token, max_age=3600, httponly=True)
+    return response # Need add a auth_token cookie to HttpResponse
 
 # Request will be sent with auth token as cookie
 def authenticate(request):
-    return None
-
-
-
-
-
+    if 'Cookie' in request.headers:
+        print("hello")
+        auth_token = request.COOKIES.get('auth_token')
+        hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
+        select_query = """
+            SELECT * FROM users
+            WHERE auth_token = %s
+        """
+        print(cursor)
+        cursor.execute(select_query, (hashed_token,))
+        rows = cursor.fetchall()
+        if len(rows) != 0:
+            print('1')
+            print(rows[0][1])
+            return JsonResponse({'username': rows[0][1]}, status=200)
+        else:
+            print('2')
+            return HttpResponse("User not found",status = 404)
 
 # cursor.close()
 # connector.close()
