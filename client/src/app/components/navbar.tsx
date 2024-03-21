@@ -16,7 +16,20 @@ export default function Navbar()
         const response = await fetch("/api/authenticate", {
           method: "GET",
         })
-        alert(response.status)
+        if (response.status == 200) {
+            const responseData = await response.json()
+            setUsername(responseData['username'])
+            setMode(1)
+        }
+      }
+
+      async function logout() {
+        const response = await fetch("/api/logout", {
+            method: "POST"
+        })
+        if (response.status == 200) {
+            window.location.reload()
+        }
       }
 
       function renderNavbar() {
@@ -37,7 +50,8 @@ export default function Navbar()
                     <div className="flex-1">
                         <button className="btn btn-ghost text-xl" onClick={() => {window.location.href = "/"}}>Jinder</button>
                     </div>
-                    <button className="btn btn-ghost text-l">{username}</button>
+                    <h1 className="text-l">{username}</h1>
+                    <button className="btn btn-ghost text-l" onClick={logout}>Logout</button>
                 </div>
             )
         }

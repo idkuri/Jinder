@@ -33,7 +33,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "../server/templates/types/**/*.ts",
-    "templates/types/**/*.ts"
+    "templates/types/**/*.ts",
+    "/templates/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
