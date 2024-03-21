@@ -37,6 +37,21 @@ if not exists:
     cursor.execute(create_table_query)
     connector.commit()
 
+cursor.execute("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = %s)", ('posts',))
+exists = cursor.fetchone()[0]
+
+if not exists:
+    create_table_query = '''
+        CREATE TABLE posts (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR UNIQUE NOT NULL,
+            content VARCHAR NOT NULL
+        )
+    '''
+    cursor.execute(create_table_query)
+    connector.commit()
+
+
 def register_user(request):
     try:
         body = json.loads(request.body)
@@ -78,15 +93,15 @@ def register_user(request):
 
 def user_login(request):
     body = json.loads(request.body)
-    print(body['username'])
+    # print(body['username'])
     select_query = """
         SELECT * FROM users
         WHERE username = %s
     """
     cursor.execute(select_query, (body['username'],))
     rows = cursor.fetchall()
-    print(rows)
-    print(len(rows))
+    # print(rows)
+    # print(len(rows))
     if len(rows) == 0:
         return HttpResponse("Invalid username, this username is not in server.")
     
@@ -116,23 +131,73 @@ def user_login(request):
 # Request will be sent with auth token as cookie
 def authenticate(request):
     if 'Cookie' in request.headers:
-        print("hello")
+        # print("hello")
         auth_token = request.COOKIES.get('auth_token')
+        if not auth_token:
+            return HttpResponse("User not found",status = 404)
         hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
         select_query = """
             SELECT * FROM users
             WHERE auth_token = %s
         """
-        print(cursor)
+        # print(cursor)
         cursor.execute(select_query, (hashed_token,))
         rows = cursor.fetchall()
         if len(rows) != 0:
-            print('1')
-            print(rows[0][1])
+            # print('1')
+            # print(rows[0][1])
             return JsonResponse({'username': rows[0][1]}, status=200)
         else:
-            print('2')
+            # print('2')
             return HttpResponse("User not found",status = 404)
+        
+def logout(request):
+    if 'Cookie' in request.headers:
+        # print("hello")
+        auth_token = request.COOKIES.get('auth_token')
+        if not auth_token:
+            return HttpResponse("logged out")
+        
+        response = HttpResponse("logged out")
+        response.set_cookie('auth_token', '', max_age=0, httponly=True)
+        return response # Need add a auth_token cookie to HttpResponse
+            
+def createPOST(request):
+    if 'Cookie' in request.headers:
+        auth_token = request.COOKIES.get('auth_token')
+        if not auth_token:
+            return HttpResponse("User not found",status = 404)
+        hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
+        select_query = """
+            SELECT * FROM users
+            WHERE auth_token = %s
+        """
+        # print(cursor)
+        cursor.execute(select_query, (hashed_token,))
+        rows = cursor.fetchall()
 
+        username = rows[0][1]
+
+        insert_query = """
+            INSERT INTO posts (username, content)
+            VALUES (%s, %s)
+        """
+        cursor.execute(insert_query, (username, request.body))
+        connector.commit()
+
+        response = HttpResponse("Post uploaded")
+        return response # Need add a auth_token cookie to HttpResponse
+
+def getPOST(request):
+    # some parameter
+    if 'id' in request.GET:
+        select_query = """
+            SELECT * FROM posts
+            WHERE id = %s
+        """
+    cursor.execute(select_query, (request.GET['id'],))
+    row = cursor.fetchone()
+    # res_json = {'username': row[1],''}
+    pass
 # cursor.close()
 # connector.close()
