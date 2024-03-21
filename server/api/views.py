@@ -150,6 +150,9 @@ def authenticate(request):
         else:
             # print('2')
             return HttpResponse("User not found",status = 404)
+    else:
+        return HttpResponse("logged out",status = 200)
+
         
 def logout(request):
     if 'Cookie' in request.headers:
