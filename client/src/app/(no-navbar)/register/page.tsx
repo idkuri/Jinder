@@ -28,8 +28,9 @@ export default function Register() {
         accountType: accountType
       })
     })
-
+    window.location.href = "/";
   }
+  
   function renderForm() {
     if (mode == -1) {
       return (

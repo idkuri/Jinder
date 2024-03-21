@@ -111,6 +111,14 @@ def user_login(request):
 
     return HttpResponse("User Login")
 
+# Request will be sent with auth token as cookie
+def authenticate(request):
+    return None
+
+
+
+
+
 
 # cursor.close()
 # connector.close()

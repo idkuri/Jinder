@@ -58,6 +58,5 @@ __pycache__
 # Database
 *.sqlite3
 
-
-templates
 static
+client/templates

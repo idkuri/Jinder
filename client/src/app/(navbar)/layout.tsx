@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Navbar from "../components/navbar"
 import "../styles/globals.css";
+import Cookies from 'js-cookie'
+import React, { useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 

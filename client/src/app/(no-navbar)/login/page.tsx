@@ -17,7 +17,7 @@ export default function Login() {
         password: password
       })
     })
-
+    window.location.href = "/";
   }
 
   function renderForm() {
