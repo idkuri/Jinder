@@ -59,4 +59,4 @@ __pycache__
 *.sqlite3
 
 static
-client/templates
+templates
