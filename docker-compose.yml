@@ -3,12 +3,12 @@ services:
   backend:
     build: ./server
     hostname: api
-    networks:
-      - webapp
     ports:
       - "8080:8080"
+    depends_on:
+      - postgres
 
-  db:
+  postgres:
     image: postgres
     restart: always
     environment:
@@ -18,8 +18,3 @@ services:
       POSTGRES_PASSWORD: RedTeam197
     ports:
       - '5432:5432' # Remove during prod
-
-
-networks:
-  webapp:
-    driver: bridge

@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'RedDb',
         'USER': 'Admin',
         'PASSWORD': 'RedTeam197',
-        'HOST': 'localhost',
+        'HOST': 'postgres',
         'PORT': '5432',
     }
 }
