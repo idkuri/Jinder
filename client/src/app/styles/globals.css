@@ -9,10 +9,31 @@
   text-align: center;
   justify-content: center;
   /* outline: 1px solid red; */
-  height: 100vh;
-  width: 100vw;
   flex-direction: column;
   background-color: #2d2d2d;
+}
+
+.home-section {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  outline: red solid 2px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.postsPage {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  outline: purple solid 2px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100vw;
 }
 
 .doggoPicture {

@@ -1,0 +1,92 @@
+
+.postsPage {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    outline: purple solid 2px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100vw;
+    height: 100vh;
+    gap: 50px;
+}
+
+.post-content {
+    display: flex;
+    outline: rgb(255, 255, 255) solid 2px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 70%;
+    width: 100%;
+}
+
+.post-element {
+    width: 50%;
+    height: 100%;
+    outline: rgb(255, 255, 255) solid 1px;
+}
+
+.createPostButton {
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+  
+.comment-box {
+    display: flex;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    width: 500px;
+    height: 200px;
+    border-radius: 25px;
+    resize: none;
+    
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 50px;
+    /* outline: rgb(255, 255, 255) solid 1px; */
+    height: auto;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    outline: rgb(255, 255, 255) solid 2px;
+    width: 150px;
+    height: 150px;
+}
+
+.user-profile p {
+    color: rgb(255, 255, 255)
+}
+  
+textarea {
+    resize: none;
+}
+
+textarea:focus {
+    border: none;
+    outline: none;
+}
+
+.content-input {
+    height: 500px;
+    width: 700px;
+    border-radius: 15px;
+}
+
+.postForm {
+    display: flex;
+    flex-direction: column;
+}

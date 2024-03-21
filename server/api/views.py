@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import render
 import hashlib
+from django.db import transaction
 import secrets
 import psycopg2
 from psycopg2 import sql
@@ -129,30 +130,29 @@ def user_login(request):
     return response # Need add a auth_token cookie to HttpResponse
 
 # Request will be sent with auth token as cookie
+@transaction.atomic
 def authenticate(request):
     if 'Cookie' in request.headers:
         # print("hello")
         auth_token = request.COOKIES.get('auth_token')
         if not auth_token:
-            return HttpResponse("User not found",status = 404)
+            return HttpResponse("User not found", status=404)
         hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
         select_query = """
             SELECT * FROM users
             WHERE auth_token = %s
         """
-        # print(cursor)
-        cursor.execute(select_query, (hashed_token,))
-        rows = cursor.fetchall()
-        if len(rows) != 0:
-            # print('1')
-            # print(rows[0][1])
-            return JsonResponse({'username': rows[0][1]}, status=200)
-        else:
-            # print('2')
-            return HttpResponse("User not found",status = 404)
-    else:
-        return HttpResponse("logged out",status = 200)
-
+        # Assuming `cursor` is defined and is an instance of a database cursor
+        with connector.cursor() as cursor:
+            cursor.execute(select_query, (hashed_token,))
+            rows = cursor.fetchall()
+            if len(rows) != 0:
+                # print('1')
+                # print(rows[0][1])
+                return JsonResponse({'username': rows[0][1]}, status=200)
+            else:
+                print(auth_token)
+                return HttpResponse("User not found", status=404)
         
 def logout(request):
     if 'Cookie' in request.headers:
