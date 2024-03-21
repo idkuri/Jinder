@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    distDir: 'templates',
+    distDir: '../server/templates',
     assetPrefix: '',
     async headers() {
       return [
