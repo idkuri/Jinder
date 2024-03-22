@@ -47,7 +47,8 @@ if not exists:
         CREATE TABLE posts (
             id SERIAL PRIMARY KEY,
             username VARCHAR NOT NULL,
-            content VARCHAR NOT NULL
+            content VARCHAR NOT NULL,
+            liked VARCHAR[] NOT NULL
         )
     '''
     cursor.execute(create_table_query)
@@ -186,11 +187,11 @@ def createPOST(request):
         username = rows[0][1]
 
         insert_query = """
-            INSERT INTO posts (username, content)
-            VALUES (%s, %s)
+            INSERT INTO posts (username, content, liked)
+            VALUES (%s, %s, %s)
         """
         body = json.loads(request.body)
-        cursor.execute(insert_query, (username, html.escape(body['content'])))
+        cursor.execute(insert_query, (username, html.escape(body['content']), []))
         connector.commit()
 
         get_last_query = """SELECT *FROM posts ORDER BY id DESC LIMIT 1;"""
@@ -229,10 +230,70 @@ def getPOST(request):
     
 #url true/false
 def checkLike(request):
-    pass
+    if 'Cookie' in request.headers:
+        auth_token = request.COOKIES.get('auth_token')
+        if not auth_token:
+            return HttpResponse("User not found",status = 404)
+        hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
+        select_query = """
+            SELECT * FROM users
+            WHERE auth_token = %s
+        """
+        # print(cursor)
+        cursor.execute(select_query, (hashed_token,))
+        rows = cursor.fetchall()
+        connector.commit()
+        user_id = rows[0][0]
+
+        if 'id' in request.GET:
+            select_query = """
+                SELECT * FROM posts
+                WHERE id = %s
+            """
+            cursor.execute(select_query, (html.escape(request.GET['id']),))
+            row = cursor.fetchone()
+            likes = row[3]
+            if user_id in likes:
+                return True
+    return False
 
 #body write like data into post
 def like(request):
-    pass
+    if 'Cookie' in request.headers:
+        auth_token = request.COOKIES.get('auth_token')
+        if not auth_token:
+            return HttpResponse("User not found",status = 404)
+        hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
+        select_query = """
+            SELECT * FROM users
+            WHERE auth_token = %s
+        """
+        # print(cursor)
+        cursor.execute(select_query, (hashed_token,))
+        rows = cursor.fetchall()
+        connector.commit()
+        user_id = rows[0][0]
+
+        if 'id' in request.body:
+            select_query = """
+                SELECT * FROM posts
+                WHERE id = %s
+            """
+            cursor.execute(select_query, (html.escape(request.GET['id']),))
+            row = cursor.fetchone()
+            likes = row[3]
+            likes.append(user_id)
+
+            update_query = """ UPDATE posts
+            SET likes = %s
+            WHERE id = %s"""
+
+            cursor.execute(update_query, (likes,html.escape(request.GET['id']),))
+
+            response = HttpResponse("like updated")
+            return response 
+        
+    response = HttpResponse("Not found")
+    return response 
 # cursor.close()
 # connector.close()
