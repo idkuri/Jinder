@@ -7,5 +7,7 @@ urlpatterns = [
     re_path(r'login/?$', views.user_login, ),
     re_path(r'authenticate/?$', views.authenticate, ),
     re_path(r'logout/?$', views.logout, ),
+    re_path(r'createPOST/?$', views.createPOST, ),
+    re_path(r'getPOST/?$', views.getPOST, ),
 ]
 

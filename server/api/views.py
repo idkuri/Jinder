@@ -45,7 +45,7 @@ if not exists:
     create_table_query = '''
         CREATE TABLE posts (
             id SERIAL PRIMARY KEY,
-            username VARCHAR UNIQUE NOT NULL,
+            username VARCHAR NOT NULL,
             content VARCHAR NOT NULL
         )
     '''
@@ -153,6 +153,8 @@ def authenticate(request):
             else:
                 print(auth_token)
                 return HttpResponse("User not found", status=404)
+    else:
+        return HttpResponse("User not found", status=404)
         
 def logout(request):
     if 'Cookie' in request.headers:
@@ -178,6 +180,7 @@ def createPOST(request):
         # print(cursor)
         cursor.execute(select_query, (hashed_token,))
         rows = cursor.fetchall()
+        connector.commit()
 
         username = rows[0][1]
 
@@ -185,10 +188,19 @@ def createPOST(request):
             INSERT INTO posts (username, content)
             VALUES (%s, %s)
         """
-        cursor.execute(insert_query, (username, request.body))
+        body = json.loads(request.body)
+        cursor.execute(insert_query, (username, body['content']))
         connector.commit()
 
-        response = HttpResponse("Post uploaded")
+        get_last_query = """SELECT *FROM posts ORDER BY id DESC LIMIT 1;"""
+        cursor.execute(get_last_query)
+        connector.commit()
+
+        inserted_id = cursor.fetchone()[0]
+
+        response_jsonB = {'id':inserted_id, 'username':username, 'content':body['content']}
+        print(response_jsonB)
+        response = JsonResponse(response_jsonB)
         return response # Need add a auth_token cookie to HttpResponse
 
 def getPOST(request):
