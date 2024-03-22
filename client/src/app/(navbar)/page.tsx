@@ -6,15 +6,15 @@ import dog from "../../../public/doggo.jpg";
 import Post from "../components/Post"
 import "../styles/post.css";
 
-interface post_elem {
+interface PostElem {
   username: string;
   content: string;
 }
 
 
 const Home: React.FC = () => {
-  let posts: post_elem[] = []
-  const [index, setIndex] = useState(Math.floor(Math.random() * posts.length))
+  const [index, setIndex] = useState(0)
+  const [posts, setPosts] = useState<PostElem[]>([])
   const [openPostOverlay, setOpenPostOverlay] = useState(false)
   const [postContent, setPostContent] = useState("")
   const [authenticated, setAuthenticated] = useState(false)
@@ -22,8 +22,18 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     authenticate()
+    getPosts()
   }, [])
   
+  async function getPosts() {
+    const response = await fetch("/api/getPOST", {
+      method: "GET",
+    })
+    if (response.status == 200) {
+        const responseData = await response.json()
+        alert(responseData)
+    }
+  }
   async function authenticate() {
     const response = await fetch("/api/authenticate", {
       method: "GET",
