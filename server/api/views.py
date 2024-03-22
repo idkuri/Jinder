@@ -198,9 +198,20 @@ def getPOST(request):
             SELECT * FROM posts
             WHERE id = %s
         """
-    cursor.execute(select_query, (request.GET['id'],))
-    row = cursor.fetchone()
-    # res_json = {'username': row[1],''}
-    pass
+        cursor.execute(select_query, (request.GET['id'],))
+        row = cursor.fetchone()
+        res_json = {'username': row[1],'content': row[2]}
+        return JsonResponse(res_json, status=200)
+    else:
+        select_query = """
+            SELECT * FROM posts
+        """
+        cursor.execute(select_query, (request.GET['id'],))
+        rows = cursor.fetchall()
+        res_json_list = []
+        for row in rows:
+            res_json = {'username': row[1],'content': row[2]}
+            res_json_list.append(res_json)
+        return JsonResponse(res_json_list, safe=False, status=200)
 # cursor.close()
 # connector.close()
