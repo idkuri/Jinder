@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import render
 import hashlib
+import html
 from django.db import transaction
 import secrets
 import psycopg2
@@ -56,7 +57,7 @@ if not exists:
 def register_user(request):
     try:
         body = json.loads(request.body)
-        if body['password'] != body['confirmPassword']:
+        if html.escape(body['password']) != html.escape(body['confirmPassword']):
             return HttpResponse("Invalid confirm password, Please return to homepage.")
         
         select_query = """
@@ -64,13 +65,13 @@ def register_user(request):
             WHERE username = %s
         """
         
-        cursor.execute(select_query, (body['username'],))
+        cursor.execute(select_query, (html.escape(body['username']),))
         rows = cursor.fetchall()
         if len(rows) != 0:
             return HttpResponse("Invalid user, Please return to homepage.")
         
         salt = secrets.token_hex(8) 
-        hashed_password = hashlib.sha256((body['password'] + salt).encode('utf-8')).hexdigest()
+        hashed_password = hashlib.sha256((html.escape(body['password']) + salt).encode('utf-8')).hexdigest()
         auth_token = secrets.token_hex(8)
         hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
 
@@ -79,7 +80,7 @@ def register_user(request):
             VALUES (%s, %s, %s, %s, %s)
         """
 
-        cursor.execute(insert_query, (body['username'], hashed_password, hashed_token, body['accountType'],salt))
+        cursor.execute(insert_query, (html.escape(body['username']), hashed_password, hashed_token, body['accountType'],salt))
         connector.commit()
         
         #username value;password value;confirmpassword value
@@ -99,7 +100,7 @@ def user_login(request):
         SELECT * FROM users
         WHERE username = %s
     """
-    cursor.execute(select_query, (body['username'],))
+    cursor.execute(select_query, (html.escape(body['username']),))
     rows = cursor.fetchall()
     # print(rows)
     # print(len(rows))
@@ -111,7 +112,7 @@ def user_login(request):
     auth_token = rows[0][3]
     salt = rows[0][5]
 
-    if hashed_password != hashlib.sha256((body["password"] + salt).encode('utf-8')).hexdigest():
+    if hashed_password != hashlib.sha256(html.escape((body["password"]) + salt).encode('utf-8')).hexdigest():
         response = HttpResponse("Wrong password, Please return to homepage.")
         return response # Need add a auth_token cookie to HttpResponse
     
@@ -189,7 +190,7 @@ def createPOST(request):
             VALUES (%s, %s)
         """
         body = json.loads(request.body)
-        cursor.execute(insert_query, (username, body['content']))
+        cursor.execute(insert_query, (username, html.escape(body['content'])))
         connector.commit()
 
         get_last_query = """SELECT *FROM posts ORDER BY id DESC LIMIT 1;"""
@@ -210,7 +211,7 @@ def getPOST(request):
             SELECT * FROM posts
             WHERE id = %s
         """
-        cursor.execute(select_query, (request.GET['id'],))
+        cursor.execute(select_query, (html.escape(request.GET['id']),))
         row = cursor.fetchone()
         res_json = {'username': row[1],'content': row[2]}
         return JsonResponse(res_json, status=200)
@@ -219,12 +220,19 @@ def getPOST(request):
             SELECT * FROM posts
         """
         cursor.execute(select_query)
-        print("hello")
         rows = cursor.fetchall()
         res_json_list = []
         for row in rows:
             res_json = {'id':row[0],'username': row[1],'content': row[2]}
             res_json_list.append(res_json)
         return JsonResponse(res_json_list, safe=False, status=200)
+    
+#url true/false
+def checkLike(request):
+    pass
+
+#body write like data into post
+def like(request):
+    pass
 # cursor.close()
 # connector.close()
