@@ -14,7 +14,7 @@ interface PostElem {
 
 const Home: React.FC = () => {
   const [index, setIndex] = useState(0)
-  const [posts, setPosts] = useState<PostElem[]>([])
+  const [posts, setPosts] = useState<PostElem[]>([{username: "James", content: "Hello"}])
   const [openPostOverlay, setOpenPostOverlay] = useState(false)
   const [postContent, setPostContent] = useState("")
   const [authenticated, setAuthenticated] = useState(false)
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
     })
     if (response.status == 200) {
         const responseData = await response.json()
-        alert(responseData)
+        setPosts(responseData)
     }
   }
   async function authenticate() {
@@ -104,7 +104,7 @@ const Home: React.FC = () => {
         method: "POST",
         body: JSON.stringify({content: postContent})
       })
-      // alert(postContent)
+      window.location.reload()
       setOpenPostOverlay(!openPostOverlay)
     }
 
