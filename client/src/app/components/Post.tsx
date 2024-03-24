@@ -1,25 +1,58 @@
 "use client"
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image'
 import "../styles/post.css";
 import "../styles/globals.css"
 
 interface PostProps {
+    id: number;
     username: string;
     content: string;
     createPostFunc: () => void
 }
 
-const Post: React.FC<PostProps> = ({ username, content, createPostFunc }) => {
+const Post: React.FC<PostProps> = ({ id, username, content, createPostFunc }) => {
     const [mode, setMode] = useState(0)
+    const [liked, setLiked] = useState(false)
 
+    async function handleLikeButton() {
+        const response = await fetch("/api/like", {
+            method: "POST",
+            body: JSON.stringify({id: id})
+          })
+    }
+
+    useEffect(() => {
+        getLike()
+    })
+
+    async function getLike() {
+        const response = await fetch("/api/getLike", {
+            method: "GET",
+          })
+          if (response.status == 200) {
+            const responseData = await response.json()
+            setLiked(responseData)
+        }
+    }
+ 
     function renderButtons(): JSX.Element {
-        return (
+        if (liked) {
+            return (
             <>
-                <button className="btn text-xl">Like</button>
+                <button className="btn text-xl" onClick={handleLikeButton}>Liked</button>
                 <button className="btn text-xl" onClick={() => {createPostFunc()}}>Create Post</button>
             </>
-        )
+            )
+        }
+        else {
+            return (
+                <>
+                    <button className="btn text-xl" onClick={handleLikeButton}>Like</button>
+                    <button className="btn text-xl" onClick={() => {createPostFunc()}}>Create Post</button>
+                </>
+            )
+        }
     }
     return (
         <div className="post-element">

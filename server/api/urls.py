@@ -9,5 +9,7 @@ urlpatterns = [
     re_path(r'logout/?$', views.logout, ),
     re_path(r'createPOST/?$', views.createPOST, ),
     re_path(r'getPOST/?$', views.getPOST, ),
+    re_path(r'like/?$', views.like, ),
+    re_path(r'checkLike/?$', views.checkLike, ),
 ]
 

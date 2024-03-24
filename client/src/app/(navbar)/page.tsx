@@ -7,6 +7,7 @@ import Post from "../components/Post"
 import "../styles/post.css";
 
 interface PostElem {
+  id: number;
   username: string;
   content: string;
 }
@@ -14,10 +15,10 @@ interface PostElem {
 
 const Home: React.FC = () => {
   const [index, setIndex] = useState(0)
-  const [posts, setPosts] = useState<PostElem[]>([{username: "James", content: "Hello"}])
+  const [posts, setPosts] = useState<PostElem[]>([{id: 1, username: "James", content: "Hello"}])
   const [openPostOverlay, setOpenPostOverlay] = useState(false)
   const [postContent, setPostContent] = useState("")
-  const [authenticated, setAuthenticated] = useState(false)
+  const [authenticated, setAuthenticated] = useState(true)
 
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const Home: React.FC = () => {
       return (
         <>
         <button className="btn text-xl" onClick={() =>{prevPost()}}>{'<'}</button>
-        <Post username={posts[index].username} content={posts[index].content} createPostFunc={createPostFunc}/>
+        <Post id={posts[index].id} username={posts[index].username} content={posts[index].content} createPostFunc={createPostFunc}/>
         <button className="btn text-xl" onClick={() =>{nextPost()}}>{'>'}</button>
         </>
       )
