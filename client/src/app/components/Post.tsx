@@ -19,6 +19,8 @@ const Post: React.FC<PostProps> = ({ id, username, content, createPostFunc }) =>
         const response = await fetch("/api/like", {
             method: "POST",
             body: JSON.stringify({id: id})
+          }).then(() => {
+            getLike()
           })
     }
 
@@ -27,12 +29,13 @@ const Post: React.FC<PostProps> = ({ id, username, content, createPostFunc }) =>
     })
 
     async function getLike() {
-        const response = await fetch("/api/getLike", {
+        const url = `/api/getLike?id=${id}`;
+        const response = await fetch(url, {
             method: "GET",
-          })
-          if (response.status == 200) {
-            const responseData = await response.json()
-            setLiked(responseData)
+        });
+        if (response.status == 200) {
+            const responseData = await response.json();
+            setLiked(responseData.liked);
         }
     }
  

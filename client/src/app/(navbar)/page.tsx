@@ -15,10 +15,10 @@ interface PostElem {
 
 const Home: React.FC = () => {
   const [index, setIndex] = useState(0)
-  const [posts, setPosts] = useState<PostElem[]>([{id: 1, username: "James", content: "Hello"}])
+  const [posts, setPosts] = useState<PostElem[]>([])
   const [openPostOverlay, setOpenPostOverlay] = useState(false)
   const [postContent, setPostContent] = useState("")
-  const [authenticated, setAuthenticated] = useState(true)
+  const [authenticated, setAuthenticated] = useState(false)
 
 
   useEffect(() => {
@@ -105,7 +105,9 @@ const Home: React.FC = () => {
         method: "POST",
         body: JSON.stringify({content: postContent})
       })
-      window.location.reload()
+      .then(() => {
+        getPosts()
+      })
       setOpenPostOverlay(!openPostOverlay)
     }
 

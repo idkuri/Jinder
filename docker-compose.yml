@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   backend:
+    restart: always
     build: ./server
     hostname: api
     ports:
@@ -10,7 +11,6 @@ services:
 
   postgres:
     image: postgres
-    restart: always
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_DB: RedDb

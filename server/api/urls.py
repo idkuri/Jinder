@@ -10,6 +10,6 @@ urlpatterns = [
     re_path(r'createPOST/?$', views.createPOST, ),
     re_path(r'getPOST/?$', views.getPOST, ),
     re_path(r'like/?$', views.like, ),
-    # re_path(r'getLike/?$', views.checkLike, ),
+    re_path(r'getLike/?$', views.checkLike, ),
 ]
 
