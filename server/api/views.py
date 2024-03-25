@@ -227,37 +227,41 @@ def getPOST(request):
             res_json = {'id':row[0],'username': row[1],'content': row[2]}
             res_json_list.append(res_json)
         return JsonResponse(res_json_list, safe=False, status=200)
+# cursor.close()
+# connector.close()
     
-#url true/false
-def checkLike(request):
-    if 'Cookie' in request.headers:
-        auth_token = request.COOKIES.get('auth_token')
-        if not auth_token:
-            return HttpResponse("User not found",status = 404)
-        hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
-        select_query = """
-            SELECT * FROM users
-            WHERE auth_token = %s
-        """
-        # print(cursor)
-        cursor.execute(select_query, (hashed_token,))
-        rows = cursor.fetchall()
-        connector.commit()
-        user_id = rows[0][0]
+# def checkLike(request):
+#     if 'Cookie' in request.headers:
+#         auth_token = request.COOKIES.get('auth_token')
+#         if not auth_token:
+#             return HttpResponse("User not found",status = 404)
+#         hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
+#         select_query = """
+#             SELECT * FROM users
+#             WHERE auth_token = %s
+#         """
+#         # print(cursor)
+#         cursor.execute(select_query, (hashed_token,))
+#         rows = cursor.fetchall()
+#         user_id = rows[0][0]
 
-        if 'id' in request.GET:
-            select_query = """
-                SELECT * FROM posts
-                WHERE id = %s
-            """
-            cursor.execute(select_query, (html.escape(request.GET['id']),))
-            row = cursor.fetchone()
-            likes = row[3]
-            if user_id in likes:
-                return True
-    return False
+#         if 'id' in request.GET:
+#             select_query = """
+#                 SELECT * FROM posts
+#                 WHERE id = %s
+#             """
+#             cursor.execute(select_query, (html.escape(request.GET['id']),))
+#             row = cursor.fetchone()
+#             likes = row[3]
+#             if user_id in likes:
+#                 res_json = {liked: True}
+#                 connector.commit()
+#                 return JsonResponse(res_json, safe=False, status=200)
+#     res_json = {liked: False}
+#     connector.commit()
+#     return JsonResponse(res_json, safe=False, status=200)
 
-#body write like data into post
+# #body write like data into post
 def like(request):
     if 'Cookie' in request.headers:
         auth_token = request.COOKIES.get('auth_token')
@@ -274,26 +278,33 @@ def like(request):
         connector.commit()
         user_id = rows[0][0]
 
-        if 'id' in request.body:
+        body = json.loads(request.body)
+
+        if 'id' in body:
             select_query = """
                 SELECT * FROM posts
                 WHERE id = %s
             """
-            cursor.execute(select_query, (html.escape(request.GET['id']),))
+            cursor.execute(select_query, (body['id'],))
             row = cursor.fetchone()
             likes = row[3]
-            likes.append(user_id)
-
+            if str(user_id) in likes:
+                likes.remove(str(user_id))
+            else:
+                likes.append(str(user_id))
             update_query = """ UPDATE posts
-            SET likes = %s
+            SET liked = %s
             WHERE id = %s"""
 
-            cursor.execute(update_query, (likes,html.escape(request.GET['id']),))
-
+            print(likes) #likes is [1]
+            print(body['id'])
+            cursor.execute(update_query, (likes, body['id']))
             response = HttpResponse("like updated")
+            connector.commit()
             return response 
         
     response = HttpResponse("Not found")
+    connector.commit()
     return response 
 # cursor.close()
 # connector.close()
