@@ -56,7 +56,4 @@ __pycache__
 *.swp
 
 # Database
-*.sqlite3
-
-client/templates
-static
+*.sqlite
