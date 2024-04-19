@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+    volumes:
+      - media_volume:/server/media
 
   postgres:
     image: postgres
@@ -18,3 +20,6 @@ services:
       POSTGRES_PASSWORD: RedTeam197
     ports:
       - '5432:5432' # Remove during prod
+
+volumes:
+  media_volume:
