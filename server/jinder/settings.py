@@ -28,9 +28,9 @@ ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'django-insecure-3(alkt5z1c83zwr82vx%q_f8e(ql@0f)*5n)kokbcnn_-mvsc*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['*']
 
 APPEND_SLASH = False
 
@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'RedDb',
         'USER': 'Admin',
         'PASSWORD': 'RedTeam197',
-        'HOST': 'postgres', # Change to localhost in development mode and postgres in prod
+        'HOST': 'localhost', # Change to localhost in development mode and postgres in prod
         'PORT': '5432',
     }
 }
@@ -137,3 +137,6 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
