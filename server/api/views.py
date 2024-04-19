@@ -212,16 +212,23 @@ def createPOST(request):
             VALUES (%s, %s, %s, %s)
         """
 
+        print(request.POST.get("content"))
+
+        print("hello")
+
         cursor.execute(insert_query, (username, html.escape(request.POST.get('content')), filename, []))
         connector.commit()
 
-        get_last_query = """SELECT *FROM posts ORDER BY id DESC LIMIT 1;"""
+        print("hello")
+        get_last_query = """SELECT * FROM posts ORDER BY id DESC LIMIT 1;"""
         cursor.execute(get_last_query)
         connector.commit()
 
         inserted_id = cursor.fetchone()[0]
-
-        response_jsonB = {'id':inserted_id, 'username':username, 'content':html.escape(request.POST.get('content')), "file": filename}
+        if len(uploaded_file.name) != 0:
+            response_jsonB = {'id':inserted_id, 'username':username, 'content':html.escape(request.POST.get('content')), "file": filename}
+        else:
+            response_jsonB = {'id':inserted_id, 'username':username, 'content':html.escape(request.POST.get('content'))}
         print(response_jsonB)
         response = JsonResponse(response_jsonB)
         return response # Need add a auth_token cookie to HttpResponse

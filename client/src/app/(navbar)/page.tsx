@@ -107,9 +107,8 @@ const Home: React.FC = () => {
       if (fileData) {
         formData.append('file', fileData);
       }
-      if (fileData) {
-        formData.append('content', postContent)
-      }
+      formData.append('content', postContent)
+
 
       const response = await fetch("/api/createPOST", {
         method: "POST",
