@@ -6,6 +6,8 @@ ENV HOME /server
 
 COPY . .
 
+RUN apt-get install libpq-dev
+
 RUN pip install -r requirements.txt
 
 EXPOSE 8080
