@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "rimraf ../server/templates && rimraf ../server/static && next build && python ../server/manage.py collectstatic && python ../server/manage.py runserver",
+    "build": "rimraf ../server/templates && rimraf ../server/static && next build && python ../server/manage.py collectstatic && python ../server/manage.py migrate && python ../server/manage.py runserver ",
     "start": "next start",
     "lint": "next lint"
   },

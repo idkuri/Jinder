@@ -23,6 +23,16 @@ def serveImage(request):
     mime_type, _ = mimetypes.guess_type(image_path)
     with open(image_path, 'rb') as f:
         return HttpResponse(f.read(), content_type=mime_type)
+    
+def serveMedia(request):
+    url_param = request.path
+    if url_param.startswith('/media'):
+        url_param = url_param[7:]
+    image_path = os.path.join(settings.MEDIA_ROOT, url_param)
+    mime_type, _ = mimetypes.guess_type(image_path)
+    with open(image_path, 'rb') as f:
+        print("Hello")
+        return HttpResponse(f.read(), content_type=mime_type)
 
 def serveLoginPage(request):
     return render(request, 'login.html')

@@ -10,6 +10,11 @@ import secrets
 import psycopg2
 from psycopg2 import sql
 import json
+from PIL import Image  
+from io import BytesIO
+import uuid
+import os
+
 # Create your views here.
 dbsettings = settings.DATABASES['default']
 # print("Flag " + str(dbsettings))
@@ -48,6 +53,7 @@ if not exists:
             id SERIAL PRIMARY KEY,
             username VARCHAR NOT NULL,
             content VARCHAR NOT NULL,
+            file VARCHAR DEFAULT NULL,
             liked VARCHAR[] NOT NULL
         )
     '''
@@ -168,7 +174,8 @@ def logout(request):
         response = HttpResponse("logged out")
         response.set_cookie('auth_token', '', max_age=0, httponly=True)
         return response # Need add a auth_token cookie to HttpResponse
-            
+
+
 def createPOST(request):
     if 'Cookie' in request.headers:
         auth_token = request.COOKIES.get('auth_token')
@@ -183,15 +190,29 @@ def createPOST(request):
         cursor.execute(select_query, (hashed_token,))
         rows = cursor.fetchall()
         connector.commit()
-
+        filename = ""
         username = rows[0][1]
+        try:
+            uploaded_file = request.FILES['file']
+            file_content = uploaded_file.read()
+            filename = html.escape(uploaded_file.name)
+            filename = str(uuid.uuid4()) + '_' + filename
+            while os.path.exists(os.path.join(settings.MEDIA_ROOT, filename)):
+                filename = str(uuid.uuid4()) + '_' + uploaded_file.name
+
+            with open(os.path.join(settings.MEDIA_ROOT, filename), "wb") as destination:
+                destination.write(file_content)
+            uploaded_file.close()
+        except Exception as error:
+            print(error)
+
 
         insert_query = """
-            INSERT INTO posts (username, content, liked)
-            VALUES (%s, %s, %s)
+            INSERT INTO posts (username, content, file, liked)
+            VALUES (%s, %s, %s, %s)
         """
-        body = json.loads(request.body)
-        cursor.execute(insert_query, (username, html.escape(body['content']), []))
+
+        cursor.execute(insert_query, (username, html.escape(request.POST.get('content')), filename, []))
         connector.commit()
 
         get_last_query = """SELECT *FROM posts ORDER BY id DESC LIMIT 1;"""
@@ -200,7 +221,7 @@ def createPOST(request):
 
         inserted_id = cursor.fetchone()[0]
 
-        response_jsonB = {'id':inserted_id, 'username':username, 'content':body['content']}
+        response_jsonB = {'id':inserted_id, 'username':username, 'content':html.escape(request.POST.get('content')), "file": filename}
         print(response_jsonB)
         response = JsonResponse(response_jsonB)
         return response # Need add a auth_token cookie to HttpResponse
@@ -214,7 +235,7 @@ def getPOST(request):
         """
         cursor.execute(select_query, (html.escape(request.GET['id']),))
         row = cursor.fetchone()
-        res_json = {'username': row[1],'content': row[2]}
+        res_json = {'username': row[1],'content': row[2], 'file': row[3]}
         return JsonResponse(res_json, status=200)
     else:
         select_query = """
@@ -224,11 +245,10 @@ def getPOST(request):
         rows = cursor.fetchall()
         res_json_list = []
         for row in rows:
-            res_json = {'id':row[0],'username': row[1],'content': row[2]}
+            res_json = {'id':row[0],'username': row[1],'content': row[2], 'file': row[3]}
             res_json_list.append(res_json)
         return JsonResponse(res_json_list, safe=False, status=200)
-# cursor.close()
-# connector.close()
+    
     
 def checkLike(request):
     if 'Cookie' in request.headers:
@@ -251,7 +271,7 @@ def checkLike(request):
             """
             cursor.execute(select_query, (html.escape(request.GET['id']),))
             row = cursor.fetchone()
-            likes = row[3]
+            likes = row[4]
             if str(user_id) in likes:
                 res_json = {"liked": True}
                 connector.commit()
@@ -286,7 +306,7 @@ def like(request):
             """
             cursor.execute(select_query, (body['id'],))
             row = cursor.fetchone()
-            likes = row[3]
+            likes = row[4]
             if str(user_id) in likes:
                 likes.remove(str(user_id))
             else:

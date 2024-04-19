@@ -91,3 +91,8 @@ textarea:focus {
     display: flex;
     flex-direction: column;
 }
+
+.post-button-container {
+    display: flex;
+    flex-direction: row;
+}

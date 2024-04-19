@@ -13,5 +13,6 @@ urlpatterns = [
     re_path(r'^login/?$', views.serveLoginPage, name="serveLoginPage"),
     re_path(r'^register/?$', views.serveRegisterPage, name="serveRegisterPage"),
     re_path(r'.txt/?$', views.serveRSC, name="serveRSC"),
+    re_path(r'^media/', views.serveMedia, name="serveMedia"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

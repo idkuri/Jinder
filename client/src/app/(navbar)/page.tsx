@@ -10,6 +10,7 @@ interface PostElem {
   id: number;
   username: string;
   content: string;
+  file: string;
 }
 
 
@@ -18,7 +19,8 @@ const Home: React.FC = () => {
   const [posts, setPosts] = useState<PostElem[]>([])
   const [openPostOverlay, setOpenPostOverlay] = useState(false)
   const [postContent, setPostContent] = useState("")
-  const [authenticated, setAuthenticated] = useState(false)
+  const [authenticated, setAuthenticated] = useState(true)
+  const [fileData, setFileData] = useState<File | null>(null)
 
 
   useEffect(() => {
@@ -78,7 +80,7 @@ const Home: React.FC = () => {
       return (
         <>
         <button className="btn text-xl" onClick={() =>{prevPost()}}>{'<'}</button>
-        <Post id={posts[index].id} username={posts[index].username} content={posts[index].content} createPostFunc={createPostFunc}/>
+        <Post id={posts[index].id} username={posts[index].username} content={posts[index].content} file={posts[index].file} createPostFunc={createPostFunc}/>
         <button className="btn text-xl" onClick={() =>{nextPost()}}>{'>'}</button>
         </>
       )
@@ -101,20 +103,38 @@ const Home: React.FC = () => {
 
     async function handleSubmitPost(event: React.MouseEvent<HTMLButtonElement>) {
       event.preventDefault();
+      const formData = new FormData();
+      if (fileData) {
+        formData.append('file', fileData);
+      }
+      if (fileData) {
+        formData.append('content', postContent)
+      }
+
       const response = await fetch("/api/createPOST", {
         method: "POST",
-        body: JSON.stringify({content: postContent})
+        body: formData
       })
       .then(() => {
         getPosts()
+        setPostContent("")
+        setFileData(null)
       })
       setOpenPostOverlay(!openPostOverlay)
     }
 
 
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0]; // Get the first selected file
+      if (file) {
+        setFileData(file);
+      }
+    }
+
     function renderPostCreationForm() {
       return (
-        <form className="postForm">
+        <form className="postForm" encType="multipart/form-data">
           <label>
             <textarea
               className="content-input"
@@ -124,9 +144,14 @@ const Home: React.FC = () => {
               cols={50} 
             ></textarea>
           </label>
-          <label>
-            <button className="btn text-xl" onClick={(event) =>{handleSubmitPost(event)}}>Submit Post</button>
-          </label>
+          <div className="post-button-container">
+            <label>
+              <input type="file" onChange={handleFileChange}/>
+            </label>
+            <label>
+              <button className="btn text-xl" onClick={(event) =>{handleSubmitPost(event)}}>Submit Post</button>
+            </label>
+          </div>
         </form>
       );
     }

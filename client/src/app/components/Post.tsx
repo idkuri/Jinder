@@ -8,10 +8,11 @@ interface PostProps {
     id: number;
     username: string;
     content: string;
-    createPostFunc: () => void
+    file : string;
+    createPostFunc: () => void;
 }
 
-const Post: React.FC<PostProps> = ({ id, username, content, createPostFunc }) => {
+const Post: React.FC<PostProps> = ({ id, username, content, file, createPostFunc }) => {
     const [mode, setMode] = useState(0)
     const [liked, setLiked] = useState(false)
 
@@ -63,7 +64,10 @@ const Post: React.FC<PostProps> = ({ id, username, content, createPostFunc }) =>
                     <Image src="https://www.svgrepo.com/show/347900/person.svg" width={100} height={100} alt="Person"></Image>
                     <p>{username}</p>
                 </div>
-                <div className='post-content'>{content}</div>
+                <div className='post-content'>
+                    <p>{content}</p>
+                    <img src={"http://localhost:8080/media/"+ file}></img>
+                </div>
                 <div className='footer'>
                     {renderButtons()}
                 </div>

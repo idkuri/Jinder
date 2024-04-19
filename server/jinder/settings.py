@@ -28,7 +28,7 @@ ROOT_PATH = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'django-insecure-3(alkt5z1c83zwr82vx%q_f8e(ql@0f)*5n)kokbcnn_-mvsc*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'RedDb',
         'USER': 'Admin',
         'PASSWORD': 'RedTeam197',
-        'HOST': 'postgres', # Change to localhost in development mode and postgres in prod
+        'HOST': 'localhost', # Change to localhost in development mode and postgres in prod
         'PORT': '5432',
     }
 }
