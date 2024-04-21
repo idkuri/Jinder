@@ -36,7 +36,8 @@ APPEND_SLASH = False
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [  
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,8 +75,14 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'jinder.asgi.application'
 WSGI_APPLICATION = 'jinder.wsgi.application'
 
+CHANNEL_LAYERS = { 
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }   
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

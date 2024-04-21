@@ -1,0 +1,21 @@
+{
+  "pages": {
+    "/(navbar)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/(navbar)/layout.css",
+      "static/chunks/app/(navbar)/layout.js"
+    ],
+    "/(navbar)/chat/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/(navbar)/chat/page.css",
+      "static/chunks/app/(navbar)/chat/page.js"
+    ],
+    "/not-found": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/not-found.js"
+    ]
+  }
+}

@@ -60,8 +60,24 @@ if not exists:
     cursor.execute(create_table_query)
     connector.commit()
 
+cursor.execute("SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = %s)", ('chat',))
+exists = cursor.fetchone()[0]
+
+if not exists:
+    create_table_query = '''
+        CREATE TABLE chat (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR NOT NULL,
+            content VARCHAR NOT NULL
+        )
+    '''
+    cursor.execute(create_table_query)
+    connector.commit()
+cursor.close()
+
 
 def register_user(request):
+    cursor = cursor = connector.cursor()
     try:
         body = json.loads(request.body)
         if html.escape(body['password']) != html.escape(body['confirmPassword']):
@@ -93,14 +109,17 @@ def register_user(request):
         #username value;password value;confirmpassword value
         response = HttpResponse("User Registration success, Please return to homepage.")
         response.set_cookie('auth_token', auth_token, max_age=3600, httponly=True)
+        cursor.close()
         return response # Need add a auth_token cookie to HttpResponse
     
     except psycopg2.Error as error:
         # Rollback the transaction in case of an error
         connector.rollback()
+        cursor.close()
         print("Error creating table:", error)
 
 def user_login(request):
+    cursor = connector.cursor()
     body = json.loads(request.body)
     # print(body['username'])
     select_query = """
@@ -174,9 +193,47 @@ def logout(request):
         response = HttpResponse("logged out")
         response.set_cookie('auth_token', '', max_age=0, httponly=True)
         return response # Need add a auth_token cookie to HttpResponse
+    
+def postChat(user, message):
+    cursor = connector.cursor()
+    insert_query = """
+            INSERT INTO chat (username, content)
+            VALUES (%s, %s)
+    """
+
+    cursor.execute(insert_query, (user, html.escape(message)))
+    connector.commit()
+    cursor.close()
+
+@transaction.atomic
+def getChat(request):
+    cursor = connector.cursor()
+    if 'id' in request.GET:
+        select_query = """
+            SELECT * FROM posts
+            WHERE id = %s
+        """
+        cursor.execute(select_query, (html.escape(request.GET['id']),))
+        row = cursor.fetchone()
+        res_json = {'username': row[1],'content': row[2], 'file': row[3]}
+        cursor.close()
+        return JsonResponse(res_json, status=200)
+    else:
+        select_query = """
+            SELECT * FROM chat
+        """
+        cursor.execute(select_query)
+        rows = cursor.fetchall()
+        res_json_list = []
+        for row in rows:
+            res_json = {'id':row[0],'username': row[1],'content': row[2]}
+            res_json_list.append(res_json)
+        cursor.close()
+        return JsonResponse(res_json_list, safe=False, status=200)
 
 
 def createPOST(request):
+    cursor = connector.cursor()
     if 'Cookie' in request.headers:
         auth_token = request.COOKIES.get('auth_token')
         if not auth_token:
@@ -192,6 +249,7 @@ def createPOST(request):
         connector.commit()
         filename = ""
         username = rows[0][1]
+        uploaded_file = None
         try:
             uploaded_file = request.FILES['file']
             file_content = uploaded_file.read()
@@ -212,28 +270,25 @@ def createPOST(request):
             VALUES (%s, %s, %s, %s)
         """
 
-        print(request.POST.get("content"))
-
-        print("hello")
-
         cursor.execute(insert_query, (username, html.escape(request.POST.get('content')), filename, []))
         connector.commit()
 
-        print("hello")
         get_last_query = """SELECT * FROM posts ORDER BY id DESC LIMIT 1;"""
         cursor.execute(get_last_query)
         connector.commit()
 
         inserted_id = cursor.fetchone()[0]
-        if len(uploaded_file.name) != 0:
+        if uploaded_file != None and len(uploaded_file.name) != 0:
             response_jsonB = {'id':inserted_id, 'username':username, 'content':html.escape(request.POST.get('content')), "file": filename}
         else:
             response_jsonB = {'id':inserted_id, 'username':username, 'content':html.escape(request.POST.get('content'))}
         print(response_jsonB)
         response = JsonResponse(response_jsonB)
+        cursor.close()
         return response # Need add a auth_token cookie to HttpResponse
 
 def getPOST(request):
+    cursor = connector.cursor()
     # some parameter
     if 'id' in request.GET:
         select_query = """
@@ -243,6 +298,7 @@ def getPOST(request):
         cursor.execute(select_query, (html.escape(request.GET['id']),))
         row = cursor.fetchone()
         res_json = {'username': row[1],'content': row[2], 'file': row[3]}
+        cursor.close()
         return JsonResponse(res_json, status=200)
     else:
         select_query = """
@@ -254,13 +310,16 @@ def getPOST(request):
         for row in rows:
             res_json = {'id':row[0],'username': row[1],'content': row[2], 'file': row[3]}
             res_json_list.append(res_json)
+        cursor.close()
         return JsonResponse(res_json_list, safe=False, status=200)
     
     
 def checkLike(request):
+    cursor = connector.cursor()
     if 'Cookie' in request.headers:
         auth_token = request.COOKIES.get('auth_token')
         if not auth_token:
+            cursor.close()
             return HttpResponse("User not found",status = 404)
         hashed_token = str(hashlib.sha256((auth_token).encode('utf-8')).hexdigest())
         select_query = """
@@ -270,6 +329,7 @@ def checkLike(request):
         # print(cursor)
         cursor.execute(select_query, (hashed_token,))
         rows = cursor.fetchall()
+        print(rows)
         user_id = rows[0][0]
         if 'id' in request.GET:
             select_query = """
@@ -285,10 +345,12 @@ def checkLike(request):
                 return JsonResponse(res_json, safe=False, status=200)
     res_json = {"liked": False}
     connector.commit()
+    cursor.close()
     return JsonResponse(res_json, safe=False, status=200)
 
 # #body write like data into post
 def like(request):
+    cursor = connector.cursor()
     if 'Cookie' in request.headers:
         auth_token = request.COOKIES.get('auth_token')
         if not auth_token:
@@ -329,6 +391,7 @@ def like(request):
         
     response = HttpResponse("Not found")
     connector.commit()
+    cursor.close()
     return response 
 # cursor.close()
 # connector.close()

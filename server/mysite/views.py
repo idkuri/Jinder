@@ -37,6 +37,9 @@ def serveMedia(request):
 def serveLoginPage(request):
     return render(request, 'login.html')
 
+def serveChatRoom(request):
+    return render(request, 'chat.html')
+
 def serveRegisterPage(request):
     return render(request, 'register.html')
 

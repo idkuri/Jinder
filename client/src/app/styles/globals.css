@@ -40,3 +40,17 @@
   width: 200px;
   height: 200px;
 }
+
+.chatbox {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  height: 500px;
+  overflow-y: scroll;
+  outline: 2px solid red;
+  background-color: #6e6e6e;
+}
+
+.chat-input {
+  width: 500px;
+}

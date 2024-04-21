@@ -3,7 +3,6 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
-from django.conf.urls import url
 
 urlpatterns = [
     path('', views.serveRoot, name="serveRoot"),
@@ -14,5 +13,6 @@ urlpatterns = [
     re_path(r'^register/?$', views.serveRegisterPage, name="serveRegisterPage"),
     re_path(r'.txt/?$', views.serveRSC, name="serveRSC"),
     re_path(r'^media/', views.serveMedia, name="serveMedia"),
+    re_path(r'^chat/?$', views.serveChatRoom, name="serveChatRoom"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
