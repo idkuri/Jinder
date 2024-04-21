@@ -19,7 +19,7 @@ const Home: React.FC = () => {
   const [posts, setPosts] = useState<PostElem[]>([])
   const [openPostOverlay, setOpenPostOverlay] = useState(false)
   const [postContent, setPostContent] = useState("")
-  const [authenticated, setAuthenticated] = useState(true)
+  const [authenticated, setAuthenticated] = useState(false)
   const [fileData, setFileData] = useState<File | null>(null)
 
 
