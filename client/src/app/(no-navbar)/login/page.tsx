@@ -17,7 +17,12 @@ export default function Login() {
         password: password
       })
     })
-    window.location.href = "/";
+    if (response.status == 200) {
+      window.location.href = "/chat";
+    }
+    else {
+      window.location.href = "/";
+    }
   }
 
   function renderForm() {

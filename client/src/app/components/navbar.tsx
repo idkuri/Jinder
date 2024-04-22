@@ -28,7 +28,7 @@ export default function Navbar()
             method: "POST"
         })
         if (response.status == 200) {
-            window.location.reload()
+            window.location.href = "/"
         }
       }
 
@@ -50,6 +50,7 @@ export default function Navbar()
                     <div className="flex-1">
                         <button className="btn btn-ghost text-xl" onClick={() => {window.location.href = "/"}}>Jinder</button>
                     </div>
+                    <button className="btn btn-ghost text-l" onClick={() => {window.location.href = "/"}}>Posts</button>
                     <button className="btn btn-ghost text-l" onClick={() => {window.location.href = "/chat"}}>Chatroom</button>
                     <h1 className="text-l">{username}</h1>
                     <button className="btn btn-ghost text-l" onClick={logout}>Logout</button>
