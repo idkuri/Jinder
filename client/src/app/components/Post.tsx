@@ -67,7 +67,7 @@ const Post: React.FC<PostProps> = ({ id, username, content, file, createPostFunc
                 <div className='post-content'>
                     <p>{content}</p>
                     {file == "" ? (<></>):(<>
-                        <img src={"http://143.198.161.74:8080/media/"+ file}></img>
+                        <img src={"http://" + window.location.host + "/media/"+ file}></img>
                     </>)}
                 </div>
                 <div className='footer'>
